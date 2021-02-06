@@ -10,14 +10,19 @@
           <div class="centering-box is-size-2">
             {{isRunning ? `現在 ${count} 人目` : `次は ${count} 人目から`}}
           </div>
+          <div v-if="!isRunning" class="centering-box is-size-2">
+            <b-input class="startnum-input" v-model="startNum" placeholder="途中から始める整数を入力" rounded></b-input>
+          </div>
           <p class="alert" v-if="count > 30 && isRunning">
             ※スクロール処理が追いつかない場合があるので止まった場合は最初は自分で下にスクロールしてください🙇🏻‍♂️
+            <br>
+            ただし、100以上で一気にスクロールするとそれだけでサイトがバグるので再スタート時は、50くらいから始めるのをお勧めします🙇🏻‍♂️
           </p>
         </div>
       </div>
       <div class="column is-four-fifths is-centered space-around-box">
         <b-button id="start-button" type="is-primary" @click="start">スタート</b-button>
-        <b-button id="start-button" type="is-primary" @click="reset">リセット</b-button>
+        <b-button id="start-button" type="is-primary is-light" @click="reset">リセット</b-button>
       </div>
     </div>
   </div>
@@ -29,7 +34,8 @@ export default {
   data: function() {
     return {
       isRunning: false,
-      count: 0
+      count: 0,
+      startNum: null
     }
   },
   mounted: function() {
@@ -55,8 +61,9 @@ export default {
     start () {
       var self = this;
       self.isRunning = true;
-      console.log("start clicked!!!")
-      browser.runtime.sendMessage({message: "start"})
+      if (self.startNum == null) self.startNum = 0;
+      console.log(`startNum: ${self.startNum}`);
+      browser.runtime.sendMessage({message: {message: "start", startNum: self.startNum}})
         .then(e => {
           console.log(e);
         }).catch(e => {
@@ -69,7 +76,8 @@ export default {
       const querying = browser.tabs.query({currentWindow: true, active: true});
       querying.then(function(tabs){
         console.log(tabs[0])
-        browser.tabs.sendMessage(tabs[0].id, {message: 'reset'}).then(e => console.log(`retuened!: ${e}`)).catch(e => console.error(e));
+        browser.tabs.sendMessage(tabs[0].id, {message: 'reset'}).then(e => console.log(`retuened!: ${e}`)).catch(e => console.error(e)
+      );
       });
     }
   }
@@ -133,5 +141,13 @@ html {
 .alert {
   font-size: 12px;
   color: red;
+}
+.startnum-input{
+  text-align: center;
+}
+
+.startnum-input input::placeholder {
+  font-size: 12px;
+  text-align: center;
 }
 </style>

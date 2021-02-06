@@ -12,10 +12,18 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     sendResponse({firstNum: localStorage.getItem('initialNum') ? parseInt(localStorage.getItem('initialNum'), 10) : 0 })
   }
 
+  console.log(request);
 
-  if(request.message == "start" || request.message == "restart"){
+  if(request.message.message == "start" || request.message == "restart"){
 
     var n = localStorage.getItem('initialNum') ? parseInt(localStorage.getItem('initialNum'), 10) : 0;
+
+    console.log(request);
+    if (parseInt(request.message.startNum, 10) > 0) {
+      console.log('here will set');
+      n = parseInt(request.message.startNum, 10);
+    }
+
     var users = document.querySelectorAll("[class^=grid-user-item]");
 
     console.log(n);
@@ -46,7 +54,7 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         }, 500);
 
         console.log(n);
-        browser.runtime.sendMessage({message: "plus", num: n});
+        browser.runtime.sendMessage({message: "plus", num: n + 1});
         n += 1;
         localStorage.setItem('initialNum', n);
 
@@ -66,6 +74,7 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     localStorage.setItem('initialNum', 0);
     browser.runtime.sendMessage({message: "plus", num: 0});
     sendResponse({message: "success!"})
+    window.location.href = "https://pairs.lv/search";
   }
 
   sendResponse({message: "success!"})
