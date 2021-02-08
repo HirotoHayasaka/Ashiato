@@ -42,6 +42,7 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         users = document.querySelectorAll("[class^=grid-user-item]");
       }
       while(users[n]){
+        browser.runtime.sendMessage({message: "running"});
         await _sleep(getRandomInt(800,1200));
         users[n].click();
         await _sleep(getRandomInt(800,1200));

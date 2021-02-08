@@ -54,6 +54,8 @@ export default {
         console.log(sendResponse);
         self.count = request.num;
         console.log(self.count);
+      } else if (request.message == "running"){
+        self.isRunning = true;
       }
     });
   },
